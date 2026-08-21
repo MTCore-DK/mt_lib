@@ -1,5 +1,38 @@
 {
-    "no_permission": "You do not have permission",
     "success": "Success",
-    "error": "Error"
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Information",
+
+    "no_permission": "You do not have permission",
+    "player_not_found": "Player not found",
+    "invalid_data": "Invalid data",
+    "invalid_input": "Invalid input",
+
+    "loading": "Loading...",
+    "processing": "Processing...",
+    "please_wait": "Please wait...",
+
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm",
+    "submit": "Submit",
+    "save": "Save",
+    "back": "Back",
+
+    "menu": "Menu",
+    "select": "Select",
+    "selected": "Selected",
+
+    "input": "Input",
+    "required_field": "This field is required",
+
+    "callback_not_found": "Callback not found",
+    "callback_error": "An error occurred while processing the callback",
+
+    "vehicle": "Vehicle",
+    "vehicle_not_found": "Vehicle not found",
+
+    "action_completed": "Action completed successfully",
+    "action_failed": "The action could not be completed"
 }
