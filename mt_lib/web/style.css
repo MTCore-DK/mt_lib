@@ -1,2 +1,447 @@
-body { margin:0;font-family:sans-serif }
-.notify { position:absolute;top:20px;right:20px;background:#111;color:#fff;padding:12px;border-radius:6px }
+:root {
+    --mt-bg: rgba(20, 20, 20, 0.96);
+    --mt-bg-light: rgba(30, 30, 30, 0.96);
+
+    --mt-border: rgba(255, 255, 255, 0.08);
+    --mt-border-light: rgba(255, 255, 255, 0.12);
+
+    --mt-text: #f5f5f5;
+    --mt-text-muted: #a3a3a3;
+
+    --mt-primary: #6366f1;
+    --mt-success: #22c55e;
+    --mt-error: #ef4444;
+    --mt-warning: #f59e0b;
+    --mt-info: #3b82f6;
+
+    --mt-radius: 5px;
+    --mt-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+}
+
+* {
+    bmt-sizing: border-bmt;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    color: var(--mt-text);
+
+    pointer-events: none;
+
+    user-select: none;
+}
+
+body {
+    background: transparent;
+}
+
+/* =========================================================
+   TOAST CONTAINER
+========================================================= */
+
+#toast-container {
+    position: fixed;
+
+    top: 3.5vh;
+    right: 2vw;
+
+    width: 340px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+
+    z-index: 1000;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast {
+    position: relative;
+
+    display: flex;
+    align-items: flex-start;
+
+    width: 100%;
+    min-height: 64px;
+
+    padding: 11px 13px;
+
+    background: var(--mt-bg);
+
+    border: 1px solid var(--mt-border);
+
+    border-left: 3px solid var(--mt-primary);
+
+    border-radius: var(--mt-radius);
+
+    bmt-shadow: var(--mt-shadow);
+
+    animation:
+        toast-in 0.22s ease forwards;
+
+    overflow: hidden;
+}
+
+.toast-icon {
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-right: 10px;
+
+    border-radius: 4px;
+
+    background: rgba(255, 255, 255, 0.06);
+
+    font-size: 15px;
+}
+
+.toast-content {
+    flex: 1;
+
+    min-width: 0;
+}
+
+.toast-title {
+    margin: 0 0 3px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: var(--mt-text);
+}
+
+.toast-description {
+    margin: 0;
+
+    font-size: 12px;
+    line-height: 1.4;
+
+    color: var(--mt-text-muted);
+
+    word-wrap: break-word;
+}
+
+.toast-progress {
+    position: absolute;
+
+    left: 0;
+    bottom: 0;
+
+    height: 2px;
+
+    width: 100%;
+
+    background: var(--mt-primary);
+
+    transform-origin: left;
+
+    animation: toast-progress linear forwards;
+}
+
+.toast.success {
+    border-left-color: var(--mt-success);
+}
+
+.toast.success .toast-progress {
+    background: var(--mt-success);
+}
+
+.toast.error {
+    border-left-color: var(--mt-error);
+}
+
+.toast.error .toast-progress {
+    background: var(--mt-error);
+}
+
+.toast.warning {
+    border-left-color: var(--mt-warning);
+}
+
+.toast.warning .toast-progress {
+    background: var(--mt-warning);
+}
+
+.toast.info {
+    border-left-color: var(--mt-info);
+}
+
+.toast.info .toast-progress {
+    background: var(--mt-info);
+}
+
+/* =========================================================
+   PROGRESS CIRCLE
+========================================================= */
+
+#progress-circle {
+    position: fixed;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    display: none;
+
+    flex-direction: column;
+    align-items: center;
+
+    z-index: 500;
+}
+
+.progress-wrapper {
+    position: relative;
+
+    width: 110px;
+    height: 110px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.progress-svg {
+    width: 110px;
+    height: 110px;
+
+    transform: rotate(-90deg);
+
+    overflow: visible;
+}
+
+.progress-track {
+    fill: rgba(15, 15, 15, 0.9);
+
+    stroke: rgba(255, 255, 255, 0.08);
+
+    stroke-width: 5;
+}
+
+.progress-ring {
+    fill: none;
+
+    stroke: var(--mt-primary);
+
+    stroke-width: 5;
+
+    stroke-linecap: round;
+
+    stroke-dasharray: 326.73;
+    stroke-dashoffset: 326.73;
+
+    transition: stroke-dashoffset 0.1s linear;
+
+    filter: drop-shadow(
+        0 0 5px rgba(99, 102, 241, 0.35)
+    );
+}
+
+.progress-icon {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 19px;
+
+    color: var(--mt-text);
+}
+
+.progress-label {
+    margin-top: 10px;
+
+    padding: 5px 10px;
+
+    background: rgba(15, 15, 15, 0.9);
+
+    border: 1px solid var(--mt-border);
+
+    border-radius: 4px;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    color: var(--mt-text);
+
+    bmt-shadow: var(--mt-shadow);
+}
+
+/* =========================================================
+   RADIAL MENU
+========================================================= */
+
+#radial-menu {
+    position: fixed;
+
+    top: 50%;
+    left: 50%;
+
+    width: 360px;
+    height: 360px;
+
+    transform:
+        translate(-50%, -50%)
+        scale(0.9);
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 900;
+}
+
+.radial-center {
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--mt-bg);
+
+    border: 1px solid var(--mt-border-light);
+
+    bmt-shadow: var(--mt-shadow);
+
+    font-size: 18px;
+
+    color: var(--mt-text);
+}
+
+.radial-item {
+    position: absolute;
+
+    width: 82px;
+    height: 82px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--mt-bg);
+
+    border: 1px solid var(--mt-border);
+
+    border-radius: 7px;
+
+    bmt-shadow: var(--mt-shadow);
+
+    transition:
+        transform 0.15s ease,
+        background 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.radial-item:hover {
+    background: var(--mt-bg-light);
+
+    border-color: rgba(99, 102, 241, 0.5);
+
+    transform: scale(1.06);
+}
+
+.radial-item-icon {
+    margin-bottom: 5px;
+
+    font-size: 18px;
+}
+
+.radial-item-label {
+    font-size: 10px;
+
+    color: var(--mt-text-muted);
+
+    text-align: center;
+}
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes toast-in {
+    from {
+        opacity: 0;
+        transform: translateX(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes toast-out {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(25px);
+    }
+}
+
+@keyframes toast-progress {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
+}
+
+@keyframes radial-in {
+    from {
+        opacity: 0;
+        transform:
+            translate(-50%, -50%)
+            scale(0.85);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
+}
