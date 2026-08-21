@@ -9,12 +9,14 @@ const radialMenu = document.getElementById("radial-menu");
 
 const CIRCUMFERENCE = 2 * Math.PI * 52;
 
+let progressTimer = null;
+
 progressRing.style.strokeDasharray = CIRCUMFERENCE;
 progressRing.style.strokeDashoffset = CIRCUMFERENCE;
 
 
 /* =========================================================
-   NUI MESSAGE LISTENER
+   NUI MESSAGE HANDLER
 ========================================================= */
 
 window.addEventListener("message", (event) => {
@@ -26,12 +28,12 @@ window.addEventListener("message", (event) => {
 
     switch (data.action) {
 
-        case "progressCircle":
-            showProgressCircle(data);
+        case "notify":
+            showToast(data.data || {});
             break;
 
-        case "toast":
-            showToast(data);
+        case "progressCircle":
+            showProgressCircle(data);
             break;
 
         case "radialMenu":
@@ -41,91 +43,16 @@ window.addEventListener("message", (event) => {
         case "hideRadialMenu":
             hideRadialMenu();
             break;
+
+        case "close":
+            hideAll();
+            break;
     }
 });
 
 
 /* =========================================================
-   PROGRESS CIRCLE
-========================================================= */
-
-let progressTimer = null;
-
-function showProgressCircle(data) {
-
-    clearInterval(progressTimer);
-
-    const duration = Number(data.duration) || 5000;
-
-    const label = data.label || "Loading...";
-    const icon = data.icon || "⏳";
-
-    progressLabel.textContent = label;
-    progressIcon.textContent = icon;
-
-    progressCircle.style.display = "flex";
-
-    progressRing.style.stroke = getProgressColor(
-        data.color
-    );
-
-    progressRing.style.strokeDashoffset = CIRCUMFERENCE;
-
-    const startTime = performance.now();
-
-    progressTimer = setInterval(() => {
-
-        const elapsed = performance.now() - startTime;
-
-        const progress = Math.min(
-            elapsed / duration,
-            1
-        );
-
-        const offset =
-            CIRCUMFERENCE -
-            (CIRCUMFERENCE * progress);
-
-        progressRing.style.strokeDashoffset = offset;
-
-        if (progress >= 1) {
-
-            clearInterval(progressTimer);
-
-            progressTimer = null;
-
-            hideProgressCircle();
-        }
-
-    }, 16);
-}
-
-
-function hideProgressCircle() {
-
-    progressCircle.style.display = "none";
-
-    progressRing.style.strokeDashoffset =
-        CIRCUMFERENCE;
-}
-
-
-function getProgressColor(color) {
-
-    const colors = {
-        primary: "#6366f1",
-        success: "#22c55e",
-        error: "#ef4444",
-        warning: "#f59e0b",
-        info: "#3b82f6"
-    };
-
-    return colors[color] || colors.primary;
-}
-
-
-/* =========================================================
-   TOAST
+   NOTIFICATION / TOAST
 ========================================================= */
 
 function showToast(data) {
@@ -154,7 +81,7 @@ function showToast(data) {
     const icon =
         data.icon ||
         icons[type] ||
-        "i";
+        icons.info;
 
 
     const toast = document.createElement("div");
@@ -167,6 +94,7 @@ function showToast(data) {
         </div>
 
         <div class="toast-content">
+
             <div class="toast-title">
                 ${escapeHtml(title)}
             </div>
@@ -174,6 +102,7 @@ function showToast(data) {
             <div class="toast-description">
                 ${escapeHtml(description)}
             </div>
+
         </div>
 
         <div
@@ -182,19 +111,171 @@ function showToast(data) {
         ></div>
     `;
 
+
     toastContainer.appendChild(toast);
 
 
+    // Remove notification after duration
     setTimeout(() => {
+
+        if (!toast || !toast.parentNode) {
+            return;
+        }
 
         toast.style.animation =
             "toast-out 0.2s ease forwards";
 
         setTimeout(() => {
-            toast.remove();
+
+            if (toast.parentNode) {
+                toast.remove();
+            }
+
         }, 200);
 
     }, duration);
+}
+
+
+/* =========================================================
+   CLEAR ALL NOTIFICATIONS
+========================================================= */
+
+function clearToasts() {
+
+    const toasts =
+        toastContainer.querySelectorAll(".toast");
+
+    toasts.forEach((toast) => {
+
+        toast.style.animation =
+            "toast-out 0.2s ease forwards";
+
+        setTimeout(() => {
+
+            if (toast.parentNode) {
+                toast.remove();
+            }
+
+        }, 200);
+    });
+}
+
+
+/* =========================================================
+   PROGRESS CIRCLE
+========================================================= */
+
+function showProgressCircle(data) {
+
+    clearInterval(progressTimer);
+
+    const duration =
+        Number(data.duration) || 5000;
+
+    const label =
+        data.label || "Loading...";
+
+    const icon =
+        data.icon || "⏳";
+
+    const color =
+        data.color || "primary";
+
+
+    progressLabel.textContent = label;
+
+    progressIcon.textContent = icon;
+
+
+    progressRing.style.stroke =
+        getProgressColor(color);
+
+    progressRing.style.strokeDasharray =
+        CIRCUMFERENCE;
+
+    progressRing.style.strokeDashoffset =
+        CIRCUMFERENCE;
+
+
+    progressCircle.style.display = "flex";
+
+
+    const startTime =
+        performance.now();
+
+
+    progressTimer = setInterval(() => {
+
+        const elapsed =
+            performance.now() - startTime;
+
+        const progress =
+            Math.min(elapsed / duration, 1);
+
+
+        const offset =
+            CIRCUMFERENCE -
+            (CIRCUMFERENCE * progress);
+
+
+        progressRing.style.strokeDashoffset =
+            offset;
+
+
+        if (progress >= 1) {
+
+            clearInterval(progressTimer);
+
+            progressTimer = null;
+
+            hideProgressCircle();
+        }
+
+    }, 16);
+}
+
+
+/* =========================================================
+   HIDE PROGRESS
+========================================================= */
+
+function hideProgressCircle() {
+
+    clearInterval(progressTimer);
+
+    progressTimer = null;
+
+    progressCircle.style.display =
+        "none";
+
+    progressRing.style.strokeDashoffset =
+        CIRCUMFERENCE;
+}
+
+
+/* =========================================================
+   PROGRESS COLORS
+========================================================= */
+
+function getProgressColor(color) {
+
+    const colors = {
+
+        primary: "#6366f1",
+
+        success: "#22c55e",
+
+        error: "#ef4444",
+
+        warning: "#f59e0b",
+
+        info: "#3b82f6"
+    };
+
+
+    return colors[color] ||
+        colors.primary;
 }
 
 
@@ -204,22 +285,62 @@ function showToast(data) {
 
 function showRadialMenu(data) {
 
+    const items =
+        Array.isArray(data.items)
+            ? data.items
+            : [];
+
+
     radialMenu.innerHTML = "";
 
-    const items = data.items || [];
 
-    const center = document.createElement("div");
+    /*
+        Center button
+    */
 
-    center.className = "radial-center";
+    const center =
+        document.createElement("div");
+
+    center.className =
+        "radial-center";
 
     center.innerHTML = `
         <span>✕</span>
     `;
 
+
+    center.addEventListener("click", () => {
+
+        hideRadialMenu();
+
+        sendNuiCallback(
+            "closeRadialMenu"
+        );
+    });
+
+
     radialMenu.appendChild(center);
 
 
+    /*
+        No items
+    */
+
+    if (items.length === 0) {
+
+        radialMenu.style.display =
+            "flex";
+
+        return;
+    }
+
+
+    /*
+        Radial item positions
+    */
+
     const radius = 125;
+
 
     items.forEach((item, index) => {
 
@@ -227,6 +348,7 @@ function showRadialMenu(data) {
             (index / items.length) *
             Math.PI * 2 -
             Math.PI / 2;
+
 
         const x =
             Math.cos(angle) * radius;
@@ -241,8 +363,10 @@ function showRadialMenu(data) {
         element.className =
             "radial-item";
 
+
         element.style.transform =
             `translate(${x}px, ${y}px)`;
+
 
         element.innerHTML = `
             <div class="radial-item-icon">
@@ -255,30 +379,42 @@ function showRadialMenu(data) {
         `;
 
 
-        element.addEventListener("click", () => {
+        element.addEventListener(
+            "click",
+            () => {
 
-            window.parent.postMessage({
-                action: "radialSelect",
-                id: item.id
-            }, "*");
+                sendNuiCallback(
+                    "radialSelect",
+                    {
+                        id: item.id
+                    }
+                );
 
-        });
+                hideRadialMenu();
+            }
+        );
 
 
         radialMenu.appendChild(element);
     });
 
 
-    radialMenu.style.display = "flex";
+    radialMenu.style.display =
+        "flex";
 
     radialMenu.style.animation =
         "radial-in 0.15s ease forwards";
 }
 
 
+/* =========================================================
+   HIDE RADIAL MENU
+========================================================= */
+
 function hideRadialMenu() {
 
-    radialMenu.style.display = "none";
+    radialMenu.style.display =
+        "none";
 
     radialMenu.innerHTML = `
         <div class="radial-center">
@@ -286,6 +422,87 @@ function hideRadialMenu() {
         </div>
     `;
 }
+
+
+/* =========================================================
+   HIDE EVERYTHING
+========================================================= */
+
+function hideAll() {
+
+    clearToasts();
+
+    hideProgressCircle();
+
+    hideRadialMenu();
+}
+
+
+/* =========================================================
+   NUI CALLBACK
+========================================================= */
+
+function sendNuiCallback(action, data = {}) {
+
+    /*
+        FiveM NUI callback.
+
+        resource name is automatically resolved
+        by GetParentResourceName().
+    */
+
+    if (
+        typeof GetParentResourceName !==
+        "function"
+    ) {
+        return;
+    }
+
+
+    fetch(
+        `https://${GetParentResourceName()}/${action}`,
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                    "application/json; charset=UTF-8"
+            },
+
+            body: JSON.stringify(data)
+        }
+    ).catch(() => {
+        // Ignore NUI callback errors
+    });
+}
+
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (event.key !== "Escape") {
+            return;
+        }
+
+
+        if (
+            radialMenu.style.display !==
+            "none"
+        ) {
+
+            hideRadialMenu();
+
+            sendNuiCallback(
+                "closeRadialMenu"
+            );
+        }
+    }
+);
 
 
 /* =========================================================
@@ -298,37 +515,40 @@ function capitalize(value) {
         return "";
     }
 
-    return value.charAt(0).toUpperCase() +
-        value.slice(1);
+
+    return (
+        value.charAt(0).toUpperCase() +
+        value.slice(1)
+    );
 }
 
 
 function escapeHtml(value) {
 
     return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 }
-
-
-/* =========================================================
-   ESCAPE = CLOSE RADIAL MENU
-========================================================= */
-
-document.addEventListener("keydown", (event) => {
-
-    if (event.key === "Escape") {
-
-        if (radialMenu.style.display !== "none") {
-
-            hideRadialMenu();
-
-            window.parent.postMessage({
-                action: "closeRadialMenu"
-            }, "*");
-        }
-    }
-});
