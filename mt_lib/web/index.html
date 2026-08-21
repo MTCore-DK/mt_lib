@@ -1,4 +1,52 @@
-<html>
-<head><link rel="stylesheet" href="style.css"></head>
-<body><div id="ui"></div><script src="script.js"></script></body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>mt UI</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="toast-container"></div>
+
+    <div id="progress-circle">
+        <div class="progress-wrapper">
+            <svg class="progress-svg" viewBmt="0 0 120 120">
+                <circle
+                    class="progress-track"
+                    cx="60"
+                    cy="60"
+                    r="52"
+                />
+
+                <circle
+                    id="progress-ring"
+                    class="progress-ring"
+                    cx="60"
+                    cy="60"
+                    r="52"
+                />
+            </svg>
+
+            <div id="progress-icon" class="progress-icon">
+                ⏳
+            </div>
+        </div>
+
+        <div id="progress-label" class="progress-label">
+            Loading...
+        </div>
+    </div>
+
+    <div id="radial-menu">
+        <div class="radial-center">
+            <span>✕</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
 </html>
