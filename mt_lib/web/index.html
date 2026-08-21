@@ -1,52 +1,316 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>mt UI</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet" href="style.css">
+    <meta
+        name="color-scheme"
+        content="dark"
+    >
+
+    <title>MT Library</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 </head>
 
 <body>
-    <div id="toast-container"></div>
 
-    <div id="progress-circle">
-        <div class="progress-wrapper">
-            <svg class="progress-svg" viewBmt="0 0 120 120">
-                <circle
-                    class="progress-track"
-                    cx="60"
-                    cy="60"
-                    r="52"
-                />
+    <!-- =====================================================
+         MT LIB UI
+         ===================================================== -->
 
-                <circle
-                    id="progress-ring"
-                    class="progress-ring"
-                    cx="60"
-                    cy="60"
-                    r="52"
-                />
-            </svg>
+    <main id="mt-ui">
 
-            <div id="progress-icon" class="progress-icon">
-                ⏳
+        <!-- =================================================
+             NOTIFICATIONS
+             ================================================= -->
+
+        <section
+            id="toast-container"
+            class="toast-container"
+            aria-live="polite"
+            aria-atomic="true"
+        ></section>
+
+
+        <!-- =================================================
+             PROGRESS
+             ================================================= -->
+
+        <section
+            id="progress-circle"
+            class="progress-container"
+            hidden
+        >
+
+            <div class="progress-wrapper">
+
+                <svg
+                    class="progress-svg"
+                    width="120"
+                    height="120"
+                    viewBox="0 0 120 120"
+                    aria-hidden="true"
+                >
+
+                    <circle
+                        class="progress-track"
+                        cx="60"
+                        cy="60"
+                        r="52"
+                    />
+
+                    <circle
+                        id="progress-ring"
+                        class="progress-ring"
+                        cx="60"
+                        cy="60"
+                        r="52"
+                    />
+
+                </svg>
+
+
+                <div
+                    id="progress-icon"
+                    class="progress-icon"
+                >
+                    ⏳
+                </div>
+
             </div>
-        </div>
 
-        <div id="progress-label" class="progress-label">
-            Loading...
-        </div>
-    </div>
 
-    <div id="radial-menu">
-        <div class="radial-center">
-            <span>✕</span>
-        </div>
-    </div>
+            <div
+                id="progress-label"
+                class="progress-label"
+            >
+                Loading...
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             TARGET
+             ================================================= -->
+
+        <section
+            id="target-container"
+            class="target-container"
+            hidden
+        >
+
+            <div class="target-indicator">
+
+                <div
+                    class="target-key"
+                    id="target-key"
+                >
+                    E
+                </div>
+
+                <div class="target-content">
+
+                    <span
+                        id="target-label"
+                        class="target-label"
+                    >
+                        Interact
+                    </span>
+
+                    <span
+                        id="target-description"
+                        class="target-description"
+                    ></span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             RADIAL MENU
+             ================================================= -->
+
+        <section
+            id="radial-menu"
+            class="radial-container"
+            hidden
+        >
+
+            <div class="radial-menu">
+
+                <div
+                    class="radial-items"
+                    id="radial-items"
+                ></div>
+
+
+                <button
+                    type="button"
+                    class="radial-center"
+                    id="radial-close"
+                    aria-label="Close menu"
+                >
+                    <span>×</span>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             MENU
+             ================================================= -->
+
+        <section
+            id="menu-container"
+            class="menu-container"
+            hidden
+        >
+
+            <div class="menu">
+
+                <header class="menu-header">
+
+                    <div>
+
+                        <h2
+                            id="menu-title"
+                            class="menu-title"
+                        >
+                            Menu
+                        </h2>
+
+                        <p
+                            id="menu-description"
+                            class="menu-description"
+                        ></p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        id="menu-close"
+                        class="menu-close"
+                        aria-label="Close menu"
+                    >
+                        ×
+                    </button>
+
+                </header>
+
+
+                <div
+                    id="menu-items"
+                    class="menu-items"
+                ></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             INPUT DIALOG
+             ================================================= -->
+
+        <section
+            id="input-container"
+            class="input-container"
+            hidden
+        >
+
+            <div class="input-dialog">
+
+                <header class="input-header">
+
+                    <div>
+
+                        <h2
+                            id="input-title"
+                            class="input-title"
+                        >
+                            Input
+                        </h2>
+
+                        <p
+                            id="input-description"
+                            class="input-description"
+                        ></p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        id="input-close"
+                        class="input-close"
+                        aria-label="Close input"
+                    >
+                        ×
+                    </button>
+
+                </header>
+
+
+                <form
+                    id="input-form"
+                    class="input-form"
+                >
+
+                    <div
+                        id="input-fields"
+                        class="input-fields"
+                    ></div>
+
+
+                    <footer class="input-actions">
+
+                        <button
+                            type="button"
+                            id="input-cancel"
+                            class="button button-secondary"
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="button button-primary"
+                        >
+                            Confirm
+                        </button>
+
+                    </footer>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         SCRIPT
+         ===================================================== -->
 
     <script src="script.js"></script>
+
 </body>
+
 </html>
