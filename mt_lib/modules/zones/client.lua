@@ -1,25 +1,208 @@
+mt = mt or {}
+mt.lib = mt.lib or {}
+
 local zones = {}
 
+
+-- =========================================================
+-- ADD ZONE
+-- =========================================================
+
 function mt.lib.addZone(id, zone)
-    zones[id] = zone
+
+    if type(id) ~= 'string' then
+        return false
+    end
+
+    if type(zone) ~= 'table' then
+        return false
+    end
+
+    if not zone.coords then
+        return false
+    end
+
+    if not zone.radius then
+        return false
+    end
+
+    zones[id] = {
+        id = id,
+
+        coords = zone.coords,
+
+        radius = tonumber(zone.radius) or 2.0,
+
+        inside = false,
+
+        onEnter = zone.onEnter,
+
+        onExit = zone.onExit,
+
+        onTick = zone.onTick
+    }
+
+    return true
 end
 
+
+-- =========================================================
+-- REMOVE ZONE
+-- =========================================================
+
+function mt.lib.removeZone(id)
+
+    if not zones[id] then
+        return false
+    end
+
+    zones[id] = nil
+
+    return true
+end
+
+
+-- =========================================================
+-- GET ZONE
+-- =========================================================
+
+function mt.lib.getZone(id)
+
+    return zones[id]
+end
+
+
+-- =========================================================
+-- GET ALL ZONES
+-- =========================================================
+
+function mt.lib.getZones()
+
+    return zones
+end
+
+
+-- =========================================================
+-- CHECK IF PLAYER IS INSIDE
+-- =========================================================
+
+function mt.lib.isInsideZone(id)
+
+    local zone = zones[id]
+
+    if not zone then
+        return false
+    end
+
+    return zone.inside == true
+end
+
+
+-- =========================================================
+-- ZONE LOOP
+-- =========================================================
+
 CreateThread(function()
+
     while true do
-        local p = PlayerPedId()
-        local c = GetEntityCoords(p)
-        for _,z in pairs(zones) do
-            local d = #(c - z.coords)
-            if d < z.radius and not z.inside then
-                z.inside = true
-                if z.onEnter then z.onEnter() end
-            elseif d >= z.radius and z.inside then
-                z.inside = false
-                if z.onExit then z.onExit() end
+
+        local sleep = 1000
+
+        local ped =
+            PlayerPedId()
+
+        local coords =
+            GetEntityCoords(ped)
+
+
+        for _, zone in pairs(zones) do
+
+            local distance =
+                #(coords - zone.coords)
+
+
+            -- Player is close enough to process zone
+            if distance <= zone.radius then
+
+                sleep = 250
+
+
+                -- ENTER
+                if not zone.inside then
+
+                    zone.inside = true
+
+                    if zone.onEnter then
+                        zone.onEnter(
+                            zone
+                        )
+                    end
+                end
+
+
+                -- TICK
+                if zone.onTick then
+
+                    zone.onTick(
+                        zone,
+                        distance
+                    )
+                end
+
+
+            -- PLAYER LEFT
+            elseif zone.inside then
+
+                zone.inside = false
+
+                if zone.onExit then
+                    zone.onExit(
+                        zone
+                    )
+                end
+            end
+
+
+            -- Nearby zone
+            if distance <= zone.radius + 25.0 then
+                sleep = math.min(
+                    sleep,
+                    500
+                )
             end
         end
-        Wait(500)
+
+
+        Wait(sleep)
     end
 end)
 
-exports('addZone', mt.lib.addZone)
+
+-- =========================================================
+-- EXPORTS
+-- =========================================================
+
+exports(
+    'addZone',
+    mt.lib.addZone
+)
+
+exports(
+    'removeZone',
+    mt.lib.removeZone
+)
+
+exports(
+    'getZone',
+    mt.lib.getZone
+)
+
+exports(
+    'getZones',
+    mt.lib.getZones
+)
+
+exports(
+    'isInsideZone',
+    mt.lib.isInsideZone
+)
