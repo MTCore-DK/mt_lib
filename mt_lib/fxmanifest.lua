@@ -4,7 +4,7 @@ game 'gta5'
 name 'mt_lib'
 author 'MT Core'
 description 'Modern shared utility library for FiveM'
-version '1.9.2'
+version '1.9.3'
 
 lua54 'yes'
 
