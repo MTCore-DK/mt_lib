@@ -1,13 +1,13 @@
 mt.lib = {}
 
 local function log(message)
-    print(('[mt_lib] %s'):format(message))
+    print(('[mt-lib] %s'):format(message))
 end
 
 if mt.config.txAdminClean then
-    log('Loaded with txAdmin cleanup enabled')
+    log('Loaded with txAdmin cleanup %true%')
 else
-    log('Loaded')
+    log('%MESSAGE%')
 end
 
 mt.lib.initialized = true
