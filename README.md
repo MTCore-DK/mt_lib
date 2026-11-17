@@ -1,124 +1,113 @@
-# mt_lib
+# 📄 CHANGELOG – mt_lib
 
-**mt_lib** is a modern, framework-agnostic FiveM library focused on simplicity, performance, and a clean dark UI inspired by modern FiveM libraries.
+# [2.0.0] – 2026-11-17
 
----
+## ✨ Notification refresh
 
-## ✨ Features
+* Redesigned toast notifications with a richer dark-glass visual style, status accents, and clearer typography.
+* Added a dismiss button and pause-on-hover timers.
+* Added six supported screen positions and enforced the configured visible-notification limit.
+* Wired configured notification duration and position into the client notification API.
+* Created notification content with DOM text nodes to keep custom text and icons safe.
+* Updated the main README to reflect the implemented APIs and compatibility limits.
+* Synchronized the resource manifest version with `config.lua`.
+* Fixed the permissions module path so the manifest can load it.
+* Added `/mt_lib` in-game settings for choosing and saving a notification position per player.
+* Translated the notification settings UI and its status messages to English.
+* Reworked initialization to preserve the library table and only log a valid startup message in debug mode.
+* Removed the unused txAdmin-cleanup setting, which did not perform any cleanup.
 
-* 🌐 **Framework Support**
-
-  * ESX
-  * QBCore
-  * vRP
-  * Standalone
-
-* 🔔 **Notification System**
-
-  * Success
-  * Error
-  * Warning
-  * Info
-  * Custom icons
-  * Animated progress indicator
-
-* ⏳ **Progress System**
-
-  * Animated progress circle
-  * Custom labels
-  * Custom icons
-  * Custom colors
-  * Cancel support
-
-* 📋 **Input Dialog**
-
-  * Text inputs
-  * Number inputs
-  * Multiple fields
-  * Submit / Cancel
-
-* 📑 **Menu System**
-
-  * Register menus
-  * Dynamic options
-  * Selection callbacks
-  * Close callbacks
-
-* 🎯 **Callback System**
-
-  * Client → Server
-  * Server → Client
-  * Promise-based callbacks
-  * `Citizen.Await`
-
-* 🔐 **Permissions**
-
-  * ACE permissions
-  * vRP groups
-
-* 📦 **Inventory Bridge**
-
-* 👤 **Player Utilities**
-
-* 📍 **Zones**
-
-* 🎯 **Target System**
-
-* 💾 **State Management**
-
-* 🔄 **GitHub Version Checking**
-
-* 🛠️ **txAdmin Integration**
-
-* 📢 **Discord Update Notifications**
-
----
-
-# 📦 Installation
-
-Download or clone the repository into your FiveM resources folder.
-
-```text
-resources/
-└── mt_lib/
-```
-
-Add the following to your `server.cfg`:
-
-```cfg
-ensure mt_lib
-```
-
-Make sure `mt_lib` starts **before any resources that depend on it**.
-
-Example:
-
-```cfg
-ensure mt_lib
-
-ensure my_resource
-ensure another_resource
-```
-
----
-
-# ⚙️ Configuration
-
-The main configuration is located in:
-
-```text
-mt_lib/
-└── config.lua
-```
-
-Example:
+## 🔔 Notification options
 
 ```lua
-mt = {}
+mt.lib.notify({
+    title = 'Vehicle secured',
+    description = 'Your vehicle is now locked.',
+    type = 'success', -- success, error, warning, info
+    duration = 4500,
+    icon = '🔒',
+    position = 'top-right'
+})
+```
 
+Positions: `top-right`, `top-left`, `top-center`, `bottom-right`, `bottom-left`, `bottom-center`.
+
+---
+
+# [1.9.2] – 2026-08-21
+
+
+## ✨ Added
+
+* New **mt_lib-inspired UI design**
+* Completely redesigned **notification/toast system**
+
+  * Success notifications
+  * Error notifications
+  * Warning notifications
+  * Info notifications
+  * Animated progress indicator
+  * Smooth fade-in/out animations
+  * Custom icons
+* New **progress circle**
+
+  * Animated SVG progress ring
+  * Custom labels
+  * Custom icons
+  * Configurable duration
+  * Primary, success, error, warning and info colors
+* New **radial menu UI**
+
+  * Dynamic menu items
+  * Icons and labels
+  * Animated opening
+  * Item selection callbacks
+  * Escape key support
+* New **UI theme configuration**
+
+  * Primary color
+  * Success color
+  * Error color
+  * Warning color
+  * Info color
+  * Background colors
+  * Border colors
+  * Text colors
+  * Border radius
+  * Shadows
+* Improved **NUI message handling**
+* Added centralized UI configuration
+* Improved HTML/CSS/JavaScript structure
+
+## 🎨 UI Improvements
+
+* Smaller and cleaner UI components
+* Improved spacing and typography
+* Subtle borders and shadows
+* Better visual hierarchy
+* Improved animations
+* Transparent FiveM-friendly background
+* Better scaling for different resolutions
+
+## 🛠 Fixed / Improved
+
+* Optimized NUI rendering
+* Reduced unnecessary DOM updates
+* Improved progress circle animation
+* Improved toast cleanup
+* Added HTML escaping for dynamic UI content
+* Improved radial menu positioning
+* Improved UI state handling
+* Improved startup initialization
+* Improved configuration structure
+* Improved compatibility with FiveM NUI
+
+## ⚙️ Configuration
+
+The UI theme can now be configured directly from `config.lua`:
+
+```lua
 mt.config = {
-    txAdminClean = true,
-
     theme = {
         primary = '#6366f1',
 
@@ -138,20 +127,24 @@ mt.config = {
 
         radius = '5px',
         shadow = '0 8px 30px rgba(0, 0, 0, 0.45)'
-    },
-
-    github = {
-        version = 'https://raw.githubusercontent.com/MTCore-DK/mt_lib/main/version.txt',
-        repo = 'https://github.com/MTCore-DK/mt_lib'
     }
 }
 ```
 
----
+## 📦 Framework Support
 
-# 🔔 Notifications
+mt_lib continues to support:
 
-The notification system uses a simple table-based API.
+* **ESX**
+* **QBCore**
+* **vRP**
+* **Standalone**
+
+Framework detection remains automatic.
+
+## 🔔 Notifications
+
+Example:
 
 ```lua
 mt.lib.notify({
@@ -171,47 +164,18 @@ warning
 info
 ```
 
-You can also use custom icons:
+## ⏳ Progress Circle
+
+Example:
 
 ```lua
-mt.lib.notify({
-    title = 'Vehicle',
-    description = 'Vehicle locked.',
-    type = 'info',
-    icon = '🔒',
-    duration = 4000
-})
-```
-
-### Export
-
-Other resources can use:
-
-```lua
-exports.mt_lib:notify({
-    title = 'Success',
-    description = 'Action completed.',
-    type = 'success'
-})
-```
-
----
-
-# ⏳ Progress
-
-The progress system displays an animated circular progress indicator.
-
-```lua
-local completed = mt.lib.progress({
+SendNUIMessage({
+    action = 'progressCircle',
     label = 'Processing...',
     duration = 5000,
     icon = '⏳',
     color = 'primary'
 })
-
-if completed then
-    print('Progress completed')
-end
 ```
 
 Supported colors:
@@ -224,354 +188,39 @@ warning
 info
 ```
 
-### Example
+## 🎯 Radial Menu
+
+The new radial menu supports dynamic items:
 
 ```lua
-mt.lib.progress({
-    label = 'Repairing vehicle...',
-    duration = 10000,
-    icon = '🔧',
-    color = 'success'
-})
-```
+SendNUIMessage({
+    action = 'radialMenu',
 
-### Cancel Progress
-
-```lua
-mt.lib.cancelProgress()
-```
-
-Export:
-
-```lua
-exports.mt_lib:progress({
-    label = 'Loading...',
-    duration = 5000
-})
-```
-
----
-
-# 📋 Input Dialog
-
-Create an input dialog with multiple fields:
-
-```lua
-local result = mt.lib.inputDialog(
-    'Character Information',
-    {
+    items = {
         {
-            type = 'input',
-            label = 'First Name',
-            name = 'firstname',
-            required = true
+            id = 'player',
+            label = 'Player',
+            icon = '👤'
         },
 
         {
-            type = 'input',
-            label = 'Last Name',
-            name = 'lastname',
-            required = true
-        },
-
-        {
-            type = 'number',
-            label = 'Age',
-            name = 'age',
-            required = true
-        }
-    }
-)
-```
-
-Check if the dialog was cancelled:
-
-```lua
-if not result then
-    print('Input cancelled')
-    return
-end
-
-print(json.encode(result))
-```
-
-Export:
-
-```lua
-local result = exports.mt_lib:inputDialog(
-    'Character Information',
-    fields
-)
-```
-
----
-
-# 📑 Menu System
-
-Register a menu:
-
-```lua
-mt.lib.registerMenu('player_menu', {
-    title = 'Player Menu',
-
-    options = {
-        {
-            id = 'identity',
-            label = 'Identity',
-            description = 'View your identity',
-            icon = '👤',
-            value = 'identity'
+            id = 'vehicle',
+            label = 'Vehicle',
+            icon = '🚗'
         },
 
         {
             id = 'settings',
             label = 'Settings',
-            description = 'Open settings',
-            icon = '⚙️',
-            value = 'settings'
+            icon = '⚙️'
         }
-    },
-
-    onSelect = function(value, data)
-
-        if value == 'identity' then
-            print('Identity selected')
-
-        elseif value == 'settings' then
-            print('Settings selected')
-        end
-
-    end,
-
-    onClose = function()
-        print('Menu closed')
-    end
+    }
 })
 ```
 
-Open the menu:
+## 🌐 GitHub Version Check
 
-```lua
-mt.lib.showMenu('player_menu')
-```
-
-Close the menu:
-
-```lua
-mt.lib.hideMenu()
-```
-
-Unregister a menu:
-
-```lua
-mt.lib.unregisterMenu('player_menu')
-```
-
----
-
-# 🔄 Callback System
-
-`mt_lib` includes a promise-based client/server callback system.
-
-## Server
-
-Register a callback:
-
-```lua
-mt.lib.registerCallback(
-    'getPlayerData',
-    function(source)
-
-        return {
-            id = source,
-            name = GetPlayerName(source)
-        }
-
-    end
-)
-```
-
-## Client
-
-Call the server:
-
-```lua
-local data = mt.lib.callback(
-    'getPlayerData'
-)
-
-if data then
-    print(data.name)
-end
-```
-
-Callbacks can also receive arguments.
-
-### Server
-
-```lua
-mt.lib.registerCallback(
-    'getPlayerMoney',
-    function(source, account)
-
-        if account == 'cash' then
-            return 500
-        end
-
-        if account == 'bank' then
-            return 2500
-        end
-
-        return 0
-    end
-)
-```
-
-### Client
-
-```lua
-local money = mt.lib.callback(
-    'getPlayerMoney',
-    'cash'
-)
-
-print(money)
-```
-
----
-
-# 🎨 NUI
-
-The NUI is built using:
-
-```text
-HTML
-CSS
-JavaScript
-```
-
-The UI currently supports:
-
-* Notifications
-* Progress circle
-* Menus
-* Input dialogs
-* Radial menus
-
-The interface uses a modern dark design with compact components, subtle borders, smooth animations, and configurable theme colors.
-
----
-
-# 🧩 Exports
-
-Common exports include:
-
-```lua
-exports.mt_lib:notify(...)
-```
-
-```lua
-exports.mt_lib:progress(...)
-```
-
-```lua
-exports.mt_lib:cancelProgress()
-```
-
-```lua
-exports.mt_lib:inputDialog(...)
-```
-
-```lua
-exports.mt_lib:registerMenu(...)
-```
-
-```lua
-exports.mt_lib:showMenu(...)
-```
-
-```lua
-exports.mt_lib:hideMenu()
-```
-
-```lua
-exports.mt_lib:unregisterMenu(...)
-```
-
-```lua
-exports.mt_lib:callback(...)
-```
-
-```lua
-exports.mt_lib:registerCallback(...)
-```
-
----
-
-# 🌐 Framework Support
-
-| Framework  | Support |
-| ---------- | ------- |
-| ESX        | ✅       |
-| QBCore     | ✅       |
-| vRP        | ✅       |
-| Standalone | ✅       |
-
-Framework detection is handled automatically where supported.
-
----
-
-# 📁 Project Structure
-
-```text
-mt_lib/
-│
-├── mt_lib/
-│   │
-│   ├── modules/
-│   │   ├── callbacks/
-│   │   │   ├── client.lua
-│   │   │   └── server.lua
-│   │   │
-│   │   └── ui/
-│   │       ├── notify.lua
-│   │       ├── progress.lua
-│   │       ├── input.lua
-│   │       └── menu.lua
-│   │
-│   └── init.lua
-│
-├── web/
-│   ├── index.html
-│   ├── style.css
-│   └── script.js
-│
-├── config.lua
-├── fxmanifest.lua
-└── README.md
-```
-
----
-
-# 🚀 Performance
-
-mt_lib is designed with performance in mind.
-
-The library aims to:
-
-* Minimize unnecessary loops
-* Avoid unnecessary NUI updates
-* Keep client-side operations lightweight
-* Use event-driven communication
-* Clean up callbacks and UI elements after use
-
----
-
-# 🔄 Version Checking
-
-mt_lib includes GitHub-based version checking.
-
-Configuration:
+GitHub version checking remains integrated:
 
 ```lua
 github = {
@@ -580,58 +229,49 @@ github = {
 }
 ```
 
-This allows the library to check whether the installed version is outdated.
+The system can be used to detect outdated versions and provide update information.
 
----
+## 📋 Installation
 
-# 🛠️ Development
-
-When developing resources using mt_lib, make sure the library is started first:
+1. Download `mt_lib`.
+2. Place it inside your FiveM `resources` folder.
+3. Add the following to `server.cfg`:
 
 ```cfg
 ensure mt_lib
 ```
 
-Then start your resource:
+4. Make sure `mt_lib` starts **before resources that depend on it**.
+5. Configure `config.lua` if required.
 
-```cfg
-ensure my_resource
-```
+## 🚀 Previous Release
 
-Example:
+# [1.0.0] – 2026-01-15
 
-```lua
-local data = mt.lib.callback('getPlayerData')
+**Initial release**
 
-if data then
-    mt.lib.notify({
-        title = 'Player',
-        description = data.name,
-        type = 'info'
-    })
-end
-```
+### Added
 
----
+* Full support for **ESX, QBCore, vRP and standalone frameworks**
+* UI notification system
+* Zones system
+* Target system
+* Inventory management
+* Player utilities
+* Server ↔ client callbacks
+* ACE and vRP permissions
+* Global and player state management
+* Menu, input and progress UI
+* GitHub version checking
+* txAdmin warning system
+* Discord webhook support
+* Full NUI web interface
 
-# 📜 License
+### Fixed / Improved
 
-See the repository license for usage and redistribution terms.
-
----
-
-# 📌 Links
-
-**GitHub Repository:**
-https://github.com/MTCore-DK/mt_lib
-
-**Current Version:**
-See `version.txt` in the repository.
-
----
-
-# ❤️ Credits
-
-Developed by **MTCore-DK**.
-
-Built for the FiveM community with a focus on clean APIs, performance, and a modern user interface.
+* Optimized loops
+* Framework auto-detection
+* Standardized NUI messages
+* Improved HTTP/version checking
+* Smooth UI animations
+* Export functions for core library features
