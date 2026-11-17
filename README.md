@@ -1,277 +1,235 @@
-# 📄 CHANGELOG – mt_lib
+# ✦ mt_lib
 
-# [2.0.0] – 2026-11-17
+**A clean, framework-aware utility library for FiveM.**  
+Small Lua APIs, useful client/server helpers, and a polished NUI — with notifications built to feel like part of your server, not an afterthought.
 
-## ✨ Notification refresh
+![FiveM](https://img.shields.io/badge/FiveM-resource-5865F2?style=flat-square)
+![Lua 5.4](https://img.shields.io/badge/Lua-5.4-2C2D72?style=flat-square)
+![Version](https://img.shields.io/badge/version-2.0.0-22C55E?style=flat-square)
 
-* Redesigned toast notifications with a richer dark-glass visual style, status accents, and clearer typography.
-* Added a dismiss button and pause-on-hover timers.
-* Added six supported screen positions and enforced the configured visible-notification limit.
-* Wired configured notification duration and position into the client notification API.
-* Created notification content with DOM text nodes to keep custom text and icons safe.
-* Updated the main README to reflect the implemented APIs and compatibility limits.
-* Synchronized the resource manifest version with `config.lua`.
-* Fixed the permissions module path so the manifest can load it.
-* Added `/mt_lib` in-game settings for choosing and saving a notification position per player.
-* Translated the notification settings UI and its status messages to English.
-* Reworked initialization to preserve the library table and only log a valid startup message in debug mode.
-* Removed the unused txAdmin-cleanup setting, which did not perform any cleanup.
+---
 
-## 🔔 Notification options
+## ⚡ What’s inside
+
+| Module | What it does |
+| --- | --- |
+| **Notifications** | Four notification types, custom icons, six screen positions, hover-to-pause timers, and a configurable visible limit |
+| **Progress UI** | Animated progress ring with label, icon, duration, and status color |
+| **Input dialogs** | NUI form dialogs with submit and cancel results |
+| **Menus** | Register, show, and remove menus with selection and close callbacks |
+| **Callbacks** | Promise-based client-to-server requests and server callback registration |
+| **Framework bridge** | Detects ESX, QBCore, vRP, or standalone |
+| **Player helpers** | Common client and server player/entity information |
+| **Inventory bridge** | Item operations for ESX and QBCore |
+| **Zones & targets** | Lightweight client-side proximity zones and entity interactions |
+| **State & locale** | Global state helpers and 15 bundled locales |
+| **Permissions** | ACE permission checks |
+
+> **Compatibility note:** framework detection includes ESX, QBCore, and vRP. Inventory operations are currently implemented for ESX and QBCore; standalone and vRP inventory operations return without performing an inventory change. Permission helpers use FiveM ACE.
+
+---
+
+## 🚀 Install
+
+1. Put the resource folder in your server’s `resources` directory.
+2. Start it before resources that use it:
+
+```cfg
+ensure mt_lib
+ensure my_resource
+```
+
+3. Configure the resource in [`mt_lib/config.lua`](./mt_lib/config.lua).
+
+The public resource name must be `mt_lib` when you call it through `exports.mt_lib`.
+
+---
+
+## 🔔 Notifications
+
+Call the notification API from a **client** script:
 
 ```lua
 mt.lib.notify({
     title = 'Vehicle secured',
     description = 'Your vehicle is now locked.',
-    type = 'success', -- success, error, warning, info
+    type = 'success',
     duration = 4500,
     icon = '🔒',
     position = 'top-right'
 })
 ```
 
-Positions: `top-right`, `top-left`, `top-center`, `bottom-right`, `bottom-left`, `bottom-center`.
+Supported `type` values: `success`, `error`, `warning`, `info`. Unknown types fall back to `info`. The icon is optional; the UI selects a type-specific icon if none is supplied.
+
+Notifications can be placed at `top-right`, `top-left`, `top-center`, `bottom-right`, `bottom-left`, or `bottom-center`. They can be dismissed with the close button, and hovering pauses the timeout.
+
+Run `/mt_lib` in-game to open the position settings. Select one of the six screen locations; the choice is saved for that player and used for notifications unless a specific notification passes its own `position`. Use **Send test notification** to preview the toast at the selected location.
+
+### Use from another resource
+
+```lua
+exports.mt_lib:notify({
+    title = 'Payment received',
+    description = '$250 was added to your account.',
+    type = 'success'
+})
+```
+
+### Notification defaults
+
+Set defaults in `mt_lib/config.lua`; per-notification `duration` and `position` override the configured defaults.
+
+```lua
+mt.config.notifications = {
+    duration = 5000,
+    maxVisible = 4,
+    position = 'top-right'
+}
+```
+
+`maxVisible` limits how many notifications remain on screen. When the limit is reached, the oldest one is removed.
 
 ---
 
-# [1.9.2] – 2026-08-21
+## 🧭 UI APIs
 
-
-## ✨ Added
-
-* New **mt_lib-inspired UI design**
-* Completely redesigned **notification/toast system**
-
-  * Success notifications
-  * Error notifications
-  * Warning notifications
-  * Info notifications
-  * Animated progress indicator
-  * Smooth fade-in/out animations
-  * Custom icons
-* New **progress circle**
-
-  * Animated SVG progress ring
-  * Custom labels
-  * Custom icons
-  * Configurable duration
-  * Primary, success, error, warning and info colors
-* New **radial menu UI**
-
-  * Dynamic menu items
-  * Icons and labels
-  * Animated opening
-  * Item selection callbacks
-  * Escape key support
-* New **UI theme configuration**
-
-  * Primary color
-  * Success color
-  * Error color
-  * Warning color
-  * Info color
-  * Background colors
-  * Border colors
-  * Text colors
-  * Border radius
-  * Shadows
-* Improved **NUI message handling**
-* Added centralized UI configuration
-* Improved HTML/CSS/JavaScript structure
-
-## 🎨 UI Improvements
-
-* Smaller and cleaner UI components
-* Improved spacing and typography
-* Subtle borders and shadows
-* Better visual hierarchy
-* Improved animations
-* Transparent FiveM-friendly background
-* Better scaling for different resolutions
-
-## 🛠 Fixed / Improved
-
-* Optimized NUI rendering
-* Reduced unnecessary DOM updates
-* Improved progress circle animation
-* Improved toast cleanup
-* Added HTML escaping for dynamic UI content
-* Improved radial menu positioning
-* Improved UI state handling
-* Improved startup initialization
-* Improved configuration structure
-* Improved compatibility with FiveM NUI
-
-## ⚙️ Configuration
-
-The UI theme can now be configured directly from `config.lua`:
+### Progress
 
 ```lua
-mt.config = {
-    theme = {
-        primary = '#6366f1',
-
-        success = '#22c55e',
-        error = '#ef4444',
-        warning = '#f59e0b',
-        info = '#3b82f6',
-
-        background = '#141414',
-        backgroundLight = '#1e1e1e',
-
-        border = 'rgba(255, 255, 255, 0.08)',
-        borderLight = 'rgba(255, 255, 255, 0.12)',
-
-        text = '#f5f5f5',
-        textMuted = '#a3a3a3',
-
-        radius = '5px',
-        shadow = '0 8px 30px rgba(0, 0, 0, 0.45)'
-    }
-}
-```
-
-## 📦 Framework Support
-
-mt_lib continues to support:
-
-* **ESX**
-* **QBCore**
-* **vRP**
-* **Standalone**
-
-Framework detection remains automatic.
-
-## 🔔 Notifications
-
-Example:
-
-```lua
-mt.lib.notify({
-    title = 'Success',
-    description = 'Item given successfully.',
-    type = 'success',
-    duration = 5000
-})
-```
-
-Supported notification types:
-
-```text
-success
-error
-warning
-info
-```
-
-## ⏳ Progress Circle
-
-Example:
-
-```lua
-SendNUIMessage({
-    action = 'progressCircle',
-    label = 'Processing...',
+local completed = mt.lib.progress({
+    label = 'Repairing vehicle…',
     duration = 5000,
-    icon = '⏳',
-    color = 'primary'
+    icon = '🔧',
+    color = 'success'
 })
+
+if completed then
+    print('Progress finished')
+end
 ```
 
-Supported colors:
+Progress colors: `primary`, `success`, `error`, `warning`, `info`. `mt.lib.cancelProgress()` hides the current indicator.
 
-```text
-primary
-success
-error
-warning
-info
-```
-
-## 🎯 Radial Menu
-
-The new radial menu supports dynamic items:
+### Input dialog
 
 ```lua
-SendNUIMessage({
-    action = 'radialMenu',
+local result = mt.lib.inputDialog('Character details', {
+    { type = 'input', label = 'First name', required = true },
+    { type = 'input', label = 'Last name', required = true },
+    { type = 'number', label = 'Age', required = true }
+})
 
+if result then
+    print(json.encode(result))
+end
+```
+
+The result is `nil` if the dialog is cancelled.
+
+### Menus
+
+Menus use an `items` array (not `options`):
+
+```lua
+mt.lib.registerMenu('player-actions', {
+    title = 'Player actions',
     items = {
         {
-            id = 'player',
-            label = 'Player',
-            icon = '👤'
+            label = 'Check ID',
+            description = 'Show your player ID',
+            icon = '🪪',
+            value = 'check-id'
         },
-
         {
-            id = 'vehicle',
-            label = 'Vehicle',
-            icon = '🚗'
-        },
-
-        {
-            id = 'settings',
-            label = 'Settings',
-            icon = '⚙️'
+            label = 'Open settings',
+            value = 'settings'
         }
-    }
+    },
+    onSelect = function(value, item)
+        print(('Selected: %s'):format(value))
+    end,
+    onClose = function()
+        print('Menu closed')
+    end
 })
+
+mt.lib.showMenu('player-actions')
 ```
 
-## 🌐 GitHub Version Check
+Use `mt.lib.hideMenu()` to close the active menu and `mt.lib.unregisterMenu(id)` to remove a registered menu.
 
-GitHub version checking remains integrated:
+---
+
+## 🔁 Client ↔ server callbacks
+
+Register callbacks on the **server**. The first argument is the requesting player’s source:
 
 ```lua
-github = {
-    version = 'https://raw.githubusercontent.com/MTCore-DK/mt_lib/main/version.txt',
-    repo = 'https://github.com/MTCore-DK/mt_lib'
-}
+mt.lib.registerCallback('getPlayerName', function(source)
+    return GetPlayerName(source)
+end)
 ```
 
-The system can be used to detect outdated versions and provide update information.
+Call it from the **client**; arguments after the callback name are passed to the server handler:
 
-## 📋 Installation
-
-1. Download `mt_lib`.
-2. Place it inside your FiveM `resources` folder.
-3. Add the following to `server.cfg`:
-
-```cfg
-ensure mt_lib
+```lua
+local playerName = mt.lib.callback('getPlayerName')
 ```
 
-4. Make sure `mt_lib` starts **before resources that depend on it**.
-5. Configure `config.lua` if required.
+---
 
-## 🚀 Previous Release
+## 🧰 Other helpers
 
-# [1.0.0] – 2026-01-15
+All helpers are available through `mt.lib` in their respective client or server context and as resource exports.
 
-**Initial release**
+| Area | Available helpers |
+| --- | --- |
+| Framework | `getFramework`, `getFrameworkCore`, `isFramework`, `isFrameworkReady` |
+| Client player | `getPed`, `getPlayerId`, `getServerId`, `getPlayerName`, `getCoords`, `getHeading`, `getVehicle`, `isInVehicle`, `getHealth`, `getArmour`, `getCurrentWeapon` |
+| Server player | `getPlayer`, `getPlayerName`, `getIdentifiers`, `getIdentifier`, `isPlayerOnline`, `getPlayers` |
+| Inventory | `addItem`, `removeItem`, `getItem`, `getItemCount`, `hasItem` |
+| Zones | `addZone`, `removeZone`, `getZone`, `getZones`, `isInsideZone` |
+| Targets | `addTarget`, `removeTarget`, `getTarget`, `getTargets` |
+| State | `setState`, `getState`, `hasState`, `removeState`, `getAllState` |
+| Permissions | `hasPermission`, `hasAnyPermission`, `hasAllPermissions` |
+| Locale | `t`, `hasLocale`, `getLocale`, `getLocales` |
 
-### Added
+For exact arguments, return values, and the client/server context of a helper, see its source under [`mt_lib/modules/`](./mt_lib/modules/).
 
-* Full support for **ESX, QBCore, vRP and standalone frameworks**
-* UI notification system
-* Zones system
-* Target system
-* Inventory management
-* Player utilities
-* Server ↔ client callbacks
-* ACE and vRP permissions
-* Global and player state management
-* Menu, input and progress UI
-* GitHub version checking
-* txAdmin warning system
-* Discord webhook support
-* Full NUI web interface
+---
 
-### Fixed / Improved
+## 🎨 UI & languages
 
-* Optimized loops
-* Framework auto-detection
-* Standardized NUI messages
-* Improved HTTP/version checking
-* Smooth UI animations
-* Export functions for core library features
+The NUI uses plain HTML, CSS, and JavaScript and does not require a separate build step. Customize its visual styles in [`mt_lib/web/style.css`](./mt_lib/web/style.css).
+
+Choose a bundled locale with `mt.config.locale`. Available locales: `cs`, `da`, `de`, `en`, `es`, `fi`, `fr`, `it`, `nl`, `no`, `pl`, `pt`, `ru`, `sv`, `tr`.
+
+---
+
+## 📁 Repository layout
+
+```text
+README.md
+mt_lib/
+├── config.lua
+├── fxmanifest.lua
+├── init.lua
+├── types.lua
+├── locales/
+├── modules/
+└── web/
+    ├── index.html
+    ├── script.js
+    └── style.css
+```
+
+---
+
+## 📄 License
+
+See the repository’s license file for usage and redistribution terms.
+
+## 💜 Credits
+
+Made by **MT Core** for the FiveM community.
